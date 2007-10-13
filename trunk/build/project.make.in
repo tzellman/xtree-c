@@ -6,7 +6,7 @@ DESCRIPTION =
 SOURCES = Attribute.c Element.c List.c
 YACCSRC = Yacc.y
 LEXSRC = Lex.l
-TESTS = testList.c testLex.c testYacc.c
+TESTS = testList.c testLex.c testYacc.c testLexYacc.c
 
 MY_CCFLAGS = 
 MY_CCDEFINES =
