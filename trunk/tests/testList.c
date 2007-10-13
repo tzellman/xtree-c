@@ -31,6 +31,8 @@ void iterateTree(xtree_Element *elem, int depth)
                 attrNode = attrNode->next;
             }
             printf(">");
+            if (elem->children)
+                printf("\n");
         }
         else if (elem->elemType == XTREE_ROOT)
             depth--; /* update the depth if root, so we aren't starting off tabbed */
@@ -38,7 +40,6 @@ void iterateTree(xtree_Element *elem, int depth)
         if (elem->children)
         {
             xtree_ListNode *iter = elem->children->first;
-            printf("\n");
             while(iter)
             {
                 iterateTree((xtree_Element*)iter->data, depth + 1);
