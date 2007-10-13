@@ -2,11 +2,22 @@
 #include <stdio.h>
 %}
 
-%x element
+%option stack yylineno
+%x comment
+
 %%
 
-"<"                     BEGIN(element);     /* start of element */
-"/>"                    BEGIN(INITIAL);     /* end of element */
+"<!--"          {
+                    yy_push_state(comment);
+                }
 
+<comment>{
+"-->"           {
+                    yy_pop_state();
+                }
+.|\n            ECHO;
+}
+
+.
 %%
 
