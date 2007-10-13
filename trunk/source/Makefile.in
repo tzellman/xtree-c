@@ -1,0 +1,26 @@
+include ../build/Makefile
+
+all: $(LIBDIR)/$(LIBNAME)
+
+LEXC = ${LEXSRC:.l=.c}
+OBJS = ${SOURCES:.c=.o} ${LEXC:.c=.o}
+$(LIBDIR)/$(LIBNAME): $(YACCOBJS) $(OBJS) dirs
+	$(ARCHIVE) $(LIBDIR)/$(LIBNAME)$(LIBEXT) $(OBJS);
+
+dirs:
+	\mkdir -p $(LIBDIR)
+
+.SUFFIXES: .o .c .y .l
+
+.l.c:
+	$(LEX) -o $@ $?
+
+.c.o:
+	$(COMPILE) -c $?
+
+clean:
+	\rm -f $(OBJS)
+	\rm -rf $(LIBDIR)
+
+raw: clean
+	\rm -f Makefile

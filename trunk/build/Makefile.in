@@ -1,0 +1,29 @@
+include ../build/project.make
+
+TARGET = @target@
+LANGUAGE = c
+
+CC = @CC@
+CCDEFINES = @cc_defs@ $(MY_CCDEFINES)
+CCFLAGS = @cc_flags@ $(MY_CCFLAGS)
+INCLUDES = -I../include @cc_includes@ $(MY_INCLUDES)
+COMPILE = $(CC) $(CCFLAGS) $(CCDEFINES) $(INCLUDES)
+
+LEX = lex
+YACC = yacc -d -v
+
+ARCHIVE = @AR@ @ar_flags@
+ARCHNAME = $(PACKAGE)-$(LANGUAGE)
+LIBNAME = lib$(ARCHNAME).a
+LIBDIR = ../lib/$(TARGET)/@lib_dir@
+DSONAME = lib$(ARCHNAME).so
+LIBS = -l$(ARCHNAME) $(MY_LIBS) @link_libs@ -ll -ly
+
+LIBPATH = -L$(LIBDIR) $(MY_LIBPATH) @link_libpath@
+LINK = $(LIBPATH) $(LFLAGS) $(LIBS)
+LFLAGS = @link_flags@ $(MY_LFLAGS)
+
+DLLFLAGS = @dll_flags@
+
+TESTDIR = ../bin/$(TARGET)
+BINDIR = ../bin/$(TARGET)

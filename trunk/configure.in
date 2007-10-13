@@ -1,0 +1,61 @@
+dnl Disable cache file creation.
+define([AC_CACHE_LOAD], )
+define([AC_CACHE_SAVE], )
+
+AC_INIT(configure.in)
+AC_CONFIG_AUX_DIR(build)
+
+# Location of makefiles directory.
+here=`pwd`
+build_dir="${here}/build/"
+ar_flags="-crs"
+AR="ar"
+
+AC_CANONICAL_SYSTEM
+AC_PROG_INSTALL
+AC_C_BIGENDIAN
+AC_PROG_CC
+
+case "${CC}" in
+    gcc)
+        AC_MSG_RESULT(gnu compiler libdir)
+        lib_dir="gnu"
+    ;;
+esac
+
+
+builtin(include, ./build/configure.linux.in)
+builtin(include, ./build/configure.apple.in)
+builtin(include, ./build/configure.baseOptions.in)
+
+#disable optz if we are debugging
+if test "${cc_debug_flags}" != ""
+then
+    cc_optz_flags=""
+fi
+
+cc_flags="${cc_flags} ${cc_optz_flags} ${cc_64_flags} ${cc_verb_flags} ${cc_debug_flags} ${cc_warn_flags}"
+
+AC_MSG_RESULT(configured for ${target}...)
+
+
+AC_SUBST(cc_includes)
+AC_SUBST(cc_flags)
+AC_SUBST(cc_64_flags)
+AC_SUBST(cc_defs)
+AC_SUBST(POSIX)
+AC_SUBST(CC)
+AC_SUBST(ar_flags)
+AC_SUBST(dll_flags)
+AC_SUBST(build_dir)
+AC_SUBST(AR)
+AC_SUBST(link_prelibs)
+AC_SUBST(link_libs)
+AC_SUBST(link_libpath)
+AC_SUBST(link_flags)
+AC_SUBST(lib_dir)
+
+# Figure out which Makefile.ins to process
+makefile_in_subs=`find . -name Makefile.in -print | sed 's/.in$//'`
+proj_make_in=`find . -name project.make.in -print | sed 's/.in$//'`
+AC_OUTPUT(${makefile_in_subs} ${proj_make_in})
