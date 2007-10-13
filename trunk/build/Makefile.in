@@ -6,7 +6,7 @@ LANGUAGE = c
 CC = @CC@
 CCDEFINES = @cc_defs@ $(MY_CCDEFINES)
 CCFLAGS = @cc_flags@ $(MY_CCFLAGS)
-INCLUDES = -I../include @cc_includes@ $(MY_INCLUDES)
+INCLUDES = -I../include -I../source @cc_includes@ $(MY_INCLUDES)
 COMPILE = $(CC) $(CCFLAGS) $(CCDEFINES) $(INCLUDES)
 
 LEX = lex
