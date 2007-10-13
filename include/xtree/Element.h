@@ -7,28 +7,43 @@
 
 
 /**
+ * Enumeration of Element types
+ */
+enum
+{
+    XTREE_ELEMENT = 0,      /** The basic element type */
+    XTREE_TEXT,             /** An element that is a text node */
+    XTREE_COMMENT,          /** An element representing a comment */
+    XTREE_ROOT              /** Only used for top-level root elements */
+};
+
+/**
  * \struct Element
  * 
  * The Element structure is the basic type for keeping track of the
  * hierarchy of elements/data. A quick example will probably explain
  * it best:
- * <div class="hidden">some div text<span>some span text</span>more text</div>
+ * <div class="hidden">some div text<!-- a comment -->
+ *      <span>some span text</span>more text</div>
  * 
- * parent: the <span>'s parent would be the <div> element.
- * tag: <span>'s tag == 'span'
- * attributes: the list of attributes for <div> would contain "class","hidden"
- * children: <span> would be added as one of <div>'s children
- * text: the text "some div text" would be the text for <div>
- * tail: the text "more text" would be the tail for <span>
+ * - the <div> tag is the top-most parent Element
+ * - the <div> tag's only attribute has (name,value) of ('class', '"hidden"')
+ * - "some div text" would be the first child Element of <div>, of type "TEXT";
+ *   its data attribute would be "some div text"
+ * - <!-- a comment --> is the 2nd child of <div>, of type "COMMENT";
+ *   its data attribute would be "<!-- a comment -->"
+ * - <span> is a child of <div>
+ * - "some span text" is a child of <span>, of type "TEXT"
+ * - ...
  */
 typedef struct _xtree_Element
 {
-    struct _xtree_Element *parent;  /** pointer to the parent */
+    struct _xtree_Element *parent;  /** Pointer to the parent */
+    int elemType;                   /** The type of the Element (ELEMENT, TEXT, COMMENT) */
     char *tag;                      /** the tag/identifier */
     xtree_List *attributes;         /** List of Attributes */
     xtree_List *children;           /** List of Element children */
-    char *text;                     /** Text contained directly after the start tag */
-    char *tail;                     /** Text contained directly after the end tag */
+    char *data;                     /** (optional) data (used for text and comment nodes) */
 }xtree_Element;
 
 
@@ -38,7 +53,9 @@ typedef struct _xtree_Element
  * \param tag       the tag name
  * \return a new Element*
  */
-PUBFUNC(xtree_Element*) xtree_Element_construct(xtree_Element *parent, char *tag);
+PUBFUNC(xtree_Element*) xtree_Element_construct(xtree_Element *parent,
+                                                char *tag,
+                                                int elemType);
 
 /**
  * Destroys the Element
@@ -51,7 +68,25 @@ PUBFUNC(void) xtree_Element_destruct(xtree_Element **elem);
  * \param tag   the tag of the new Element.
  * \return a new Element*
  */
-PUBFUNC(xtree_Element*) xtree_Element_addChild(xtree_Element *elem, char *tag);
+PUBFUNC(xtree_Element*) xtree_Element_addChild(xtree_Element *elem,
+                                               char *tag,
+                                               int elemType);
+
+/**
+ * Shortcut for:
+ *      Element *newElem = xtree_Element_addChild(elem, NULL, XTREE_TEXT);
+ *      xtree_Element_setData(newElem, data);
+ */ 
+PUBFUNC(xtree_Element*) xtree_Element_addTextChild(xtree_Element *elem,
+                                                   char *data);
+
+/**
+ * Shortcut for:
+ *      Element *newElem = xtree_Element_addChild(elem, NULL, XTREE_COMMENT);
+ *      xtree_Element_setData(newElem, data);
+ */ 
+PUBFUNC(xtree_Element*) xtree_Element_addCommentChild(xtree_Element *elem,
+                                                      char *data);
 
 /**
  * Creates and adds an Attribute to this element
@@ -65,27 +100,15 @@ PUBFUNC(xtree_Attribute*) xtree_Element_addAttribute(xtree_Element *elem,
                                                      char *value);
 
 /**
- * Sets the text for this Element. A copy of the passed-in char* is used.
- * The text is the text IMMEDIATELY following the OPENING tag of the Element.
+ * Sets the data for this Element. A copy of the passed-in char* is used.
+ * The data attribute is only used for certain Element types (TEXT, COMMENT).
  * For example:
  *      <elem>some text<div></div></elem>
- * "some text" would be the text attribute of the Element.
+ * "some text" would be the first child of <elem>, of type "TEXT"
  * 
  * \param elem  the parent Element to add to
- * \param text  the text of the Element
+ * \param data  the data of the Element
  */
-PUBFUNC(void) xtree_Element_setText(xtree_Element *elem, char *text);
-
-/**
- * Sets the tail for this Element. A copy of the passed-in char* is used.
- * The tail is the text IMMEDIATELY following the ENDING tag of the Element.
- * For example:
- *      <elem>some text<div></div>tail text</elem>
- * "tail text" would be the tail attribute of the <div> Element.
- * 
- * \param elem  the parent Element to add to
- * \param tail  the tail of the Element
- */
-PUBFUNC(void) xtree_Element_setTail(xtree_Element *elem, char *tail);
+PUBFUNC(void) xtree_Element_setData(xtree_Element *elem, char *data);
 
 #endif

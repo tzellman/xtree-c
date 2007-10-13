@@ -1,81 +1,84 @@
 #include <stdio.h>
 #include "xtree/Element.h"
 
-void iterateTree(xtree_List* tree, int depth)
+void iterateTree(xtree_Element *elem, int depth)
 {
-    xtree_ListNode *node = tree->first;
-    while(node)
+    int i;
+    
+    if (elem->elemType != XTREE_ROOT)
     {
-        int i;
-        xtree_ListNode *attrNode = NULL;
-        xtree_Element *data = (xtree_Element*)node->data;
-        
         for(i = 0; i < depth; ++i)
             printf("\t");
-        
-        printf("<%s", data->tag);
-        attrNode = data->attributes ? data->attributes->first : NULL;
-        while(attrNode)
+    }
+    
+    /* if a comment or text, just output the data */
+    if ((elem->elemType == XTREE_TEXT ||
+        elem->elemType == XTREE_COMMENT) && elem->data)
+    {
+        printf("%s\n", elem->data);
+    }
+    else
+    {
+        if (elem->tag && elem->elemType != XTREE_ROOT)
         {
-            xtree_Attribute *attr = (xtree_Attribute*)attrNode->data;
-            printf(" %s=%s", attr->name, attr->value);
-            attrNode = attrNode->next;
+            xtree_ListNode *attrNode = NULL;
+            printf("<%s", elem->tag);
+            attrNode = elem->attributes ? elem->attributes->first : NULL;
+            while(attrNode)
+            {
+                xtree_Attribute *attr = (xtree_Attribute*)attrNode->data;
+                printf(" %s=%s", attr->name, attr->value);
+                attrNode = attrNode->next;
+            }
+            printf(">");
         }
-        printf(">");
-        
-        if (data->text)
-            printf("%s", data->text);
-        
-        if (data->children)
+        else if (elem->elemType == XTREE_ROOT)
+            depth--; /* update the depth if root, so we aren't starting off tabbed */
+    
+        if (elem->children)
         {
+            xtree_ListNode *iter = elem->children->first;
             printf("\n");
-            iterateTree(data->children, depth + 1);
-            for(i = 0; i < depth; ++i)
-                printf("\t");
+            while(iter)
+            {
+                iterateTree((xtree_Element*)iter->data, depth + 1);
+                iter = iter->next;
+            }
         }
-        printf("</%s>", data->tag);
-        
-        if (data->tail)
-            printf("%s", data->tail);
-        
-        printf("\n");
-        node = node->next;
+        if (elem->tag && elem->elemType != XTREE_ROOT)
+        {
+            for(i = 0; i < depth && elem->children; ++i)
+                printf("\t");
+            printf("</%s>\n", elem->tag);
+        }
     }
 }
 
 
 int main(int argc, char **argv)
 {
-    xtree_List *tree = NULL;
-    xtree_Element *elem1 = NULL, *elem2 = NULL, *elem3 = NULL, *elem4 = NULL, *elem5 = NULL;
+    xtree_Element *root, *elem1 = NULL, *elem2 = NULL, *elem3 = NULL,
+        *elem4 = NULL, *elem5 = NULL;
     
-    tree = xtree_List_construct();
-    if (!tree)
-    {
-        fprintf(stderr, "NULL list\n");
-        exit(EXIT_FAILURE);
-    }
+    /* make the root element */
+    root = xtree_Element_construct(NULL, NULL, XTREE_ROOT);
     
-    elem1 = xtree_Element_construct(NULL, "html");
-    xtree_List_pushBack(tree, elem1);
-    
-    elem2 = xtree_Element_addChild(elem1, "body");
-    elem3 = xtree_Element_addChild(elem2, "div");
-    xtree_Element_setTail(elem3, "tail text");
-    elem4 = xtree_Element_addChild(elem2, "span");
-    
-    xtree_Element_setText(elem4, "some text");
-    
+    /* add some elements to the tree */
+    elem1 = xtree_Element_addChild(root, "html", XTREE_ELEMENT);
+    elem2 = xtree_Element_addChild(elem1, "body", XTREE_ELEMENT);
+    elem3 = xtree_Element_addChild(elem2, "div", XTREE_ELEMENT);
+    xtree_Element_addTextChild(elem2, "tail text");
+    xtree_Element_addCommentChild(elem2, "<!-- a comment -->");
+    elem4 = xtree_Element_addChild(elem2, "span", XTREE_ELEMENT);
+    xtree_Element_addTextChild(elem4, "some text");
     xtree_Element_addAttribute(elem4, "class", "\"spanClass\"");
     
     /* now, add a head, later on */
-    elem5 = xtree_Element_construct(elem1, "head");
+    elem5 = xtree_Element_construct(elem1, "head", XTREE_ELEMENT);
     xtree_List_pushFront(elem1->children, elem5);
     
-    iterateTree(tree, 0);
+    iterateTree(root, 0);
     
-    xtree_Element_destruct(&elem1); /* this will delete them all, recursively */
-    
-    xtree_List_destruct(&tree);
+    xtree_Element_destruct(&root); /* this will delete them all, recursively */
     return 0;
 }

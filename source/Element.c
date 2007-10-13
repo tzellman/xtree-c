@@ -1,11 +1,13 @@
 #include "xtree/Element.h"
 
 PUBFUNC(xtree_Element*) xtree_Element_construct(xtree_Element* parent,
-                                                char* tag)
+                                                char* tag,
+                                                int elemType)
 {
     xtree_Element *elem = (xtree_Element*)malloc(sizeof(xtree_Element));
     if (!elem) return NULL;
     elem->parent = parent;
+    elem->tag = NULL;
     if (tag)
     {
         elem->tag = malloc(strlen(tag) + 1);
@@ -16,8 +18,9 @@ PUBFUNC(xtree_Element*) xtree_Element_construct(xtree_Element* parent,
         }
         strcpy(elem->tag, tag);
     }
+    elem->elemType = elemType;
     elem->attributes = elem->children = NULL;
-    elem->text = elem->tail = NULL;
+    elem->data = NULL;
     return elem;
 }
 
@@ -55,10 +58,8 @@ PUBFUNC(void) xtree_Element_destruct(xtree_Element **elem)
             }
             xtree_List_destruct(&(*elem)->attributes);
         }
-        if ((*elem)->text)
-            free((*elem)->text);
-        if ((*elem)->tail)
-            free((*elem)->tail);
+        if ((*elem)->data)
+            free((*elem)->data);
         if ((*elem)->tag)
             free((*elem)->tag);
         free(*elem);
@@ -67,7 +68,9 @@ PUBFUNC(void) xtree_Element_destruct(xtree_Element **elem)
 }
 
 
-PUBFUNC(xtree_Element*) xtree_Element_addChild(xtree_Element *elem, char *tag)
+PUBFUNC(xtree_Element*) xtree_Element_addChild(xtree_Element *elem,
+                                               char *tag,
+                                               int elemType)
 {
     xtree_Element *child = NULL;
     
@@ -78,9 +81,27 @@ PUBFUNC(xtree_Element*) xtree_Element_addChild(xtree_Element *elem, char *tag)
             return NULL;
     }
     
-    child = xtree_Element_construct(elem, tag);
+    child = xtree_Element_construct(elem, tag, elemType);
     if (child)
         xtree_List_pushBack(elem->children, child);
+    return child;
+}
+
+PUBFUNC(xtree_Element*) xtree_Element_addTextChild(xtree_Element *elem,
+                                                   char *data)
+{
+    xtree_Element *child = xtree_Element_addChild(elem, NULL, XTREE_TEXT);
+    if (child)
+        xtree_Element_setData(child, data);
+    return child;
+}
+
+PUBFUNC(xtree_Element*) xtree_Element_addCommentChild(xtree_Element *elem,
+                                                      char *data)
+{
+    xtree_Element *child = xtree_Element_addChild(elem, NULL, XTREE_COMMENT);
+    if (child)
+        xtree_Element_setData(child, data);
     return child;
 }
 
@@ -103,28 +124,15 @@ PUBFUNC(xtree_Attribute*) xtree_Element_addAttribute(xtree_Element *elem,
     return attr;
 }
 
-PUBFUNC(void) xtree_Element_setText(xtree_Element *elem, char *text)
+PUBFUNC(void) xtree_Element_setData(xtree_Element *elem, char *data)
 {
-    if (elem->text)
-        free(elem->text);
-    elem->text = malloc(strlen(text) + 1);
-    if (!elem->text)
+    if (elem->data)
+        free(elem->data);
+    elem->data = malloc(strlen(data) + 1);
+    if (!elem->data)
     {
         /* TODO - notify error */
     }
-    strcpy(elem->text, text);
-}
-
-
-PUBFUNC(void) xtree_Element_setTail(xtree_Element *elem, char *tail)
-{
-    if (elem->tail)
-        free(elem->tail);
-    elem->tail = malloc(strlen(tail) + 1);
-    if (!elem->tail)
-    {
-        /* TODO - notify error */
-    }
-    strcpy(elem->tail, tail);
+    strcpy(elem->data, data);
 }
 
