@@ -1,0 +1,22 @@
+include ./build/project.make
+
+all: library tests
+
+.PHONY: tests
+
+library:
+	cd source; make
+
+tests:
+	cd tests; make
+
+clean:
+	cd source; make clean
+	cd tests; make clean
+	rm -rf lib; rm -rf bin
+
+raw: clean
+	cd source; make raw
+	cd tests; make raw
+	cd build; rm -f Makefile; rm -f project.make
+	rm -f Makefile

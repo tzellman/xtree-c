@@ -1,0 +1,25 @@
+include ../build/Makefile
+
+EXE    = $(TESTS:.c=)
+OBJS = ${TESTS:.c=.o}
+
+all: $(EXE)
+
+$(EXE):  $(OBJS) dirs
+	$(COMPILE) -o $@ $@.o $(LINK)
+	mv $@ $(BINDIR)
+
+dirs:
+	\mkdir -p $(BINDIR)
+
+.SUFFIXES: .o .c
+.c.o:
+	$(COMPILE) -c $?
+
+clean:
+	\rm -f $(OBJS)
+	\rm -rf $(BINDIR)
+
+raw: clean
+	\rm -f Makefile
+

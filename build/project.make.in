@@ -1,0 +1,16 @@
+PACKAGE = xtree
+BUILD = library tests
+VERSION = 1.0
+DESCRIPTION = 
+
+SOURCES = Attribute.c Element.c List.c
+YACCSRC = 
+LEXSRC = Lex.l
+TESTS = testList.c
+
+MY_CCFLAGS = 
+MY_CCDEFINES =
+MY_LFLAGS =
+MY_INCLUDES = 
+MY_LIBPATH = 
+MY_LIBS =
