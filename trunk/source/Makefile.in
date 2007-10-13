@@ -3,8 +3,9 @@ include ../build/Makefile
 all: $(LIBDIR)/$(LIBNAME)
 
 LEXC = ${LEXSRC:.l=.c}
-OBJS = ${SOURCES:.c=.o} ${LEXC:.c=.o}
-$(LIBDIR)/$(LIBNAME): $(YACCOBJS) $(OBJS) dirs
+YACCC = ${YACCSRC:.y=.c}
+OBJS = ${SOURCES:.c=.o} ${LEXC:.c=.o} ${YACCC:.c=.o}
+$(LIBDIR)/$(LIBNAME): $(OBJS) dirs
 	$(ARCHIVE) $(LIBDIR)/$(LIBNAME)$(LIBEXT) $(OBJS);
 
 dirs:
@@ -15,12 +16,16 @@ dirs:
 .l.c:
 	$(LEX) -o $@ $?
 
+.y.c:
+	$(YACC) -o $@ $?
+
 .c.o:
 	$(COMPILE) -c $?
 
 clean:
 	\rm -f $(OBJS)
 	\rm -rf $(LIBDIR)
+	\rm -f y.output
 
 raw: clean
 	\rm -f Makefile
