@@ -7,7 +7,6 @@ xtree_Element *gElement;
 %}
 
 %option stack yylineno
-%x comment
 %s element
 %x attribute
 
@@ -25,7 +24,6 @@ Name            ({Letter}|[_:]){NameChar}*
                     gElement = xtree_Element_addChild(gElement,
                         &yytext[1], XTREE_ELEMENT);
                     
-                    printf("start tag: %s\n", &yytext[1]);
                     return START_TAG;
                 }
 
@@ -66,7 +64,6 @@ Name            ({Letter}|[_:]){NameChar}*
                     /* pop to the parent element */
                     gElement = gElement->parent;
                     
-                    printf("end empty tag\n");
                     return END_EMPTY_TAG;
                 }
 
@@ -75,30 +72,18 @@ Name            ({Letter}|[_:]){NameChar}*
                     /* pop to the parent element */
                     gElement = gElement->parent;
                     
-                    printf("end tag: %s\n", &yytext[2]);
                     return END_TAG;
                 }
 
 [>=]            return *yytext;
-[ \t\n]+        ; /* ignore whitespace */
+[ \t\n]         ; /* ignore whitespace */
 }
 
 
+"<!--"[^-]*[-]{2,}([^->][^-]*[-]{2,})*">"   {
+                                                xtree_Element_addCommentChild(
+                                                    gElement, yytext);
+                                                return COMMENT;
+                                            }
+[\n]            ; /* ignore */
 %%
-
-
-
-/********************************************
-<a><b></b><c/></a>
-
-
-<comment>{
-"-->"           {
-                    yy_pop_state();
-                }
-.|\n            ECHO;
-}
-
-[ \t\n]+        return WHITESPACE;
-
-********************************************/

@@ -7,9 +7,22 @@ int yylex(void);
 %}
 
 %token START_TAG END_EMPTY_TAG END_TAG
-%token ATTRIBUTE
+%token ATTRIBUTE COMMENT
 
 %%
+
+document:
+        prolog element misc
+        ;
+
+prolog:
+        misc
+        ;
+
+misc:
+        COMMENT
+        |
+        ;
 
 element:
         START_TAG attList elementRemainder
@@ -23,14 +36,20 @@ attList:
 
 elementRemainder:
         END_EMPTY_TAG
-        | '>' content END_TAG
+        | '>' contentList END_TAG
         ;
 
 content:
-        content element
-        | element
+        element
+        | COMMENT
+        ;
+
+contentList:
+        contentList content
+        | content
         |
         ;
+    
 
 %%
 
