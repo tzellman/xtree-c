@@ -44,6 +44,7 @@ typedef struct _xtree_Element
     xtree_List *attributes;         /** List of Attributes */
     xtree_List *children;           /** List of Element children */
     char *data;                     /** (optional) data (used for text and comment nodes) */
+    int isEmpty;                    /** true if the element should be represented as an empty element */
 }xtree_Element;
 
 

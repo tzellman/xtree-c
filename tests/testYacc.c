@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "Yacc.h"
 
-int tokens[] = {'<', NAME, '>', content, '<', '/', NAME, '>', EOF};
+int tokens[] = {START_TAG, '>', END_TAG, EOF};
 int index;
 
 int yylex()

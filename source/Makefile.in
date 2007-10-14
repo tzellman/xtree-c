@@ -4,7 +4,7 @@ all: $(LIBDIR)/$(LIBNAME)
 
 LEXC = ${LEXSRC:.l=.c}
 YACCC = ${YACCSRC:.y=.c}
-OBJS = ${SOURCES:.c=.o} ${LEXC:.c=.o} ${YACCC:.c=.o}
+OBJS = ${SOURCES:.c=.o} ${YACCC:.c=.o} ${LEXC:.c=.o}
 $(LIBDIR)/$(LIBNAME): $(OBJS) dirs
 	$(ARCHIVE) $(LIBDIR)/$(LIBNAME)$(LIBEXT) $(OBJS);
 
