@@ -21,6 +21,7 @@ PUBFUNC(xtree_Element*) xtree_Element_construct(xtree_Element* parent,
     elem->elemType = elemType;
     elem->attributes = elem->children = NULL;
     elem->data = NULL;
+    elem->isEmpty = 0;
     return elem;
 }
 

@@ -17,7 +17,7 @@ ARCHNAME = $(PACKAGE)-$(LANGUAGE)
 LIBNAME = lib$(ARCHNAME).a
 LIBDIR = ../lib/$(TARGET)/@lib_dir@
 DSONAME = lib$(ARCHNAME).so
-LIBS = -l$(ARCHNAME) $(MY_LIBS) @link_libs@ -ll -ly
+LIBS = -l$(ARCHNAME) $(MY_LIBS) @link_libs@ -lfl -ly
 
 LIBPATH = -L$(LIBDIR) $(MY_LIBPATH) @link_libpath@
 LINK = $(LIBPATH) $(LFLAGS) $(LIBS)
