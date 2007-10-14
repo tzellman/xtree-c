@@ -1,0 +1,9 @@
+<!---- top level comment -- -->
+<a>
+<!-- internal comment 1 -->
+<b att="val"></b>
+
+<!-- internal comment 2 -->
+<c/></a>
+
+<!-- end of document comment -->
