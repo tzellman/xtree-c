@@ -9,6 +9,7 @@ xtree_Element *gElement;
 %option stack yylineno
 %x comment
 %s element
+%x attribute
 
 Letter          [A-Za-z]
 Digit           [0-9]
@@ -27,14 +28,38 @@ Name            ({Letter}|[_:]){NameChar}*
                     printf("start tag: %s\n", &yytext[1]);
                     return START_TAG;
                 }
-                
+
+<attribute>{
+
+{Name}\s*[=]    {
+                    yyless(yyleng - 1); /* put back the equals sign */
+                    /* get the attribute name */
+                    /* TODO - strip the spaces from the name */
+                    xtree_Element_addAttribute(gElement, yytext, NULL);
+                }
+[=]\s*          ;   /* ignore */
+(\"[^<&"]*\")|("'"[^<&']"'")    {
+                                    char* value = NULL;
+                                    xtree_Attribute *attr =
+                                        (xtree_Attribute*)gElement->attributes->last->data;
+                                    yy_pop_state();
+                                    
+                                    /* set the value of the attribute */
+                                    value = malloc(yyleng + 1);
+                                    memset(value, 0, yyleng + 1);
+                                    memcpy(value, yytext, yyleng);
+                                    attr->value = value;
+                                }
+}
+
+
 <element>{
 
-{Name}\s*[=]\"\s*{Name}\"   {
-                                /* TODO - fix this regex -- use a state */
-                                /* TODO - manipulate yylval */
-                                return ATTRIBUTE;
-                            }
+{Name}\s*[=]["']    {
+                        yy_push_state(attribute);
+                        yyless(0);  /* put back the entire lexeme */
+                    }
+
 "/>"            {
                     yy_pop_state();
                     gElement->isEmpty = 1;

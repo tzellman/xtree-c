@@ -4,6 +4,7 @@ PUBFUNC(xtree_Attribute*) xtree_Attribute_construct(char *name, char *value)
 {
     xtree_Attribute *attr = (xtree_Attribute*)malloc(sizeof(xtree_Attribute));
     if (!attr) return NULL;
+    attr->name = attr->value = NULL;
     if (name)
     {
         attr->name = malloc(strlen(name) + 1);
