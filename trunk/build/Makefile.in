@@ -4,9 +4,9 @@ TARGET = @target@
 LANGUAGE = c
 
 CC = @CC@
-CCDEFINES = @cc_defs@ $(MY_CCDEFINES)
-CCFLAGS = @cc_flags@ $(MY_CCFLAGS)
-INCLUDES = -I../include -I../source @cc_includes@ $(MY_INCLUDES)
+CCDEFINES = @cc_defs@ $(PROJ_CCDEFINES)
+CCFLAGS = @cc_flags@ $(PROJ_CCFLAGS)
+INCLUDES = -I../include -I../source @cc_includes@ $(PROJ_INCLUDES)
 COMPILE = $(CC) $(CCFLAGS) $(CCDEFINES) $(INCLUDES)
 
 LEX = lex
@@ -17,11 +17,11 @@ ARCHNAME = $(PACKAGE)-$(LANGUAGE)
 LIBNAME = lib$(ARCHNAME).a
 LIBDIR = ../lib/$(TARGET)/@lib_dir@
 DSONAME = lib$(ARCHNAME).so
-LIBS = -l$(ARCHNAME) $(MY_LIBS) @link_libs@ -lfl -ly
+LIBS = -l$(ARCHNAME) $(PROJ_LIBS) @link_libs@ -lfl -ly
 
-LIBPATH = -L$(LIBDIR) $(MY_LIBPATH) @link_libpath@
+LIBPATH = -L$(LIBDIR) $(PROJ_LIBPATH) @link_libpath@
 LINK = $(LIBPATH) $(LFLAGS) $(LIBS)
-LFLAGS = @link_flags@ $(MY_LFLAGS)
+LFLAGS = @link_flags@ $(PROJ_LFLAGS)
 
 DLLFLAGS = @dll_flags@
 

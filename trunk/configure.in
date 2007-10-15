@@ -26,7 +26,7 @@ esac
 
 builtin(include, ./build/configure.linux.in)
 builtin(include, ./build/configure.apple.in)
-builtin(include, ./build/configure.baseOptions.in)
+builtin(include, ./build/configure.options.in)
 
 #disable optz if we are debugging
 if test "${cc_debug_flags}" != ""
@@ -55,7 +55,6 @@ AC_SUBST(link_libpath)
 AC_SUBST(link_flags)
 AC_SUBST(lib_dir)
 
-# Figure out which Makefile.ins to process
 makefile_in_subs=`find . -name Makefile.in -print | sed 's/.in$//'`
 proj_make_in=`find . -name project.make.in -print | sed 's/.in$//'`
 AC_OUTPUT(${makefile_in_subs} ${proj_make_in})
