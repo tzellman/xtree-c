@@ -1,6 +1,9 @@
 #ifndef __XTREE_SYSTEM_H__
 #define __XTREE_SYSTEM_H__
 
+#include <memory.h>
+#include <stdio.h>
+
 #ifdef __cplusplus
 #   define EXTERN_C extern "C"
 #   define CODE_GUARD {

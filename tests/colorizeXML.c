@@ -2,6 +2,12 @@
 #include "Yacc.h"
 #include "xtree/Element.h"
 
+#include "xtree/System.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 /* global gElement used in Yacc.y */
 extern xtree_Element *gElement;
 
@@ -74,15 +80,38 @@ void iterateTree(xtree_Element *elem, int depth)
          for inserting the generated comment
  */
 
+#define BUF_SIZE 4096
 
-char** readTemplateFileIntoBuffers(char* path)
+char** readTemplateFileIntoBuffers(char* path, Sys_Error* err)
 {
-    FILE* tfile = NULL;
-    tfile = fopen(path, 'r');
-    if (tfile == NULL)
+    char* buf[BUF_SIZE];                /* buffer for the file input*/
+    FILE* tfile;                        /* template file ptr */
+    char* buffers[2];                   /* return buffers */
+    ssize_t nBytesRead;                 /* num bytes read */
+    int fd = -1;                        /* file descriptor */
+
+    memset(buf, 0, BUF_SIZE);
+ 
+    fd = open(path, O_RDONLY);
+    if (fd == -1)
     {
+        /* TODO: use the errno in this */
+        SYS_ERROR(err, "Couldn't open template file for reading");
+        goto ERR_EXIT;
     }
-}
+
+    while ( (nBytesRead = read(fd, (void*)buf, BUF_SIZE)) > 0  )
+    {
+        /* do something w/ this */
+        printf("%s\n", buf);
+    }
+    
+
+ERR_EXIT:
+    if (fd != -1) close(fd);
+    return buffers;
+
+} 
 
 
 int main(int argc, char **argv)
@@ -91,13 +120,15 @@ int main(int argc, char **argv)
      * generated document
      */
     char* buffers[2];
+    Sys_Error err;
     if (argc != 2)
     {
         printf("usage: %s: [html template file]");
         exit(EXIT_SUCCESS);
     }
 
-    readTemplateFileIntoBuffers(argv[1]);
+    /*Sys_Error_init(&err);*/
+    readTemplateFileIntoBuffers(argv[1], &err);
 
     /*
     gElement = xtree_Element_construct(NULL, NULL, XTREE_ROOT);
