@@ -24,3 +24,4 @@ PUBFUNC(xtree_Attribute*) xtree_Attribute_construct(char *name, char *value);
 PUBFUNC(void) xtree_Attribute_destruct(xtree_Attribute **attribute);
 
 #endif
+
