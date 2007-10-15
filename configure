@@ -4759,7 +4759,6 @@ echo "${ECHO_T}configured for ${target}..." >&6; }
 
 
 
-# Figure out which Makefile.ins to process
 makefile_in_subs=`find . -name Makefile.in -print | sed 's/.in$//'`
 proj_make_in=`find . -name project.make.in -print | sed 's/.in$//'`
 ac_config_files="$ac_config_files ${makefile_in_subs} ${proj_make_in}"

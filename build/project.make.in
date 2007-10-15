@@ -1,16 +1,10 @@
 PACKAGE = xtree
 BUILD = library tests
 VERSION = 1.0
-DESCRIPTION = 
+DESCRIPTION = XML Parser using Lex & Yacc, written in C.
+MAINTAINER = tzellman@gmail.com, adam.beauchamp@gmail.com
 
-SOURCES = Attribute.c Element.c List.c System.c
+CSRC = Attribute.c Element.c List.c Error.c
 YACCSRC = Yacc.y
 LEXSRC = Lex.l
-TESTS = testList.c testLex.c testYacc.c testLexYacc.c colorizeXML.c
-
-MY_CCFLAGS = 
-MY_CCDEFINES =
-MY_LFLAGS =
-MY_INCLUDES = 
-MY_LIBPATH = 
-MY_LIBS =
+TESTS = testList.c testPrettyPrint.c #testLex.c testYacc.c testLexYacc.c colorizeXML.c
