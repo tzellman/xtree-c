@@ -68,18 +68,42 @@ void iterateTree(xtree_Element *elem, int depth)
     }
 }
 
+/*
+     Convention: program will look for the first line
+         starting with an empty comment to use as the starting point
+         for inserting the generated comment
+ */
+
+
+char** readTemplateFileIntoBuffers(char* path)
+{
+    FILE* tfile = NULL;
+    tfile = fopen(path, 'r');
+    if (tfile == NULL)
+    {
+    }
+}
+
 
 int main(int argc, char **argv)
 {
+    /* buffers for holding the begin and end of
+     * generated document
+     */
+    char* buffers[2];
     if (argc != 2)
     {
         printf("usage: %s: [html template file]");
         exit(EXIT_SUCCESS);
     }
 
+    readTemplateFileIntoBuffers(argv[1]);
+
+    /*
     gElement = xtree_Element_construct(NULL, NULL, XTREE_ROOT);
     yyparse();
     iterateTree(gElement, 0);
+    */
     
     return 0;
 }

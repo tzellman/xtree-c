@@ -3,7 +3,7 @@ BUILD = library tests
 VERSION = 1.0
 DESCRIPTION = 
 
-SOURCES = Attribute.c Element.c List.c
+SOURCES = Attribute.c Element.c List.c System.c
 YACCSRC = Yacc.y
 LEXSRC = Lex.l
 TESTS = testList.c testLex.c testYacc.c testLexYacc.c colorizeXML.c
