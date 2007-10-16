@@ -4,6 +4,7 @@
 #include <string.h>
 #include "Yacc.h"
 #include "xtree/Element.h"
+#include "xtree/Utils.h"
 
 xtree_Element *gElement;
 
@@ -101,12 +102,9 @@ AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
                      * whitespace. If so, keep it all. Otherwise, strip it,
                      * then see if we even have any text left to add
                      */
-                    char* text = yyStrippedText();
+                    char* text = xtree_compactWhitespace(yytext, 1);
                     if (text)
-                    {
                         xtree_Element_addTextChild(gElement, text);
-                        free(text);
-                    }
                 }
 
 [ \t\n]         ; /* ignore whitespace */
@@ -116,38 +114,9 @@ AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
 
 
 {Comment}       {
-                    xtree_Element_addCommentChild(
-                        gElement, yytext);
+                    xtree_Element_addCommentChild(gElement, yytext);
                     return COMMENT;
                 }
 
 [\n]            ; /* ignore */
 %%
-
-
-char* yyStrippedText()
-{
-    char *tok = NULL, *text = NULL;
-    int first = 1;
-    text = malloc(yyleng + 1);
-    memset(text, 0, yyleng + 1);
-    
-    tok = strtok(yytext, " \n\t");
-    while(tok != NULL)
-    {
-        if (!first)
-            strcat(text, " ");
-        strcat(text, tok);
-        tok = strtok(NULL, " \n\t");
-        first = 0;
-    }
-    
-    if (strlen(text) == 0)
-    {
-        free(text);
-        text = NULL;
-    }
-    return text;
-}
-
-

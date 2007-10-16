@@ -77,5 +77,7 @@ int main(int argc, char **argv)
     
     iterateTree(gElement, 0);
     
+    xtree_Element_destruct(&gElement);
+    
     return 0;
 }
