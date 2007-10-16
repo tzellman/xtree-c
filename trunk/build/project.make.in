@@ -4,7 +4,7 @@ VERSION = 1.0
 DESCRIPTION = XML Parser using Lex & Yacc, written in C.
 MAINTAINER = tzellman@gmail.com, adam.beauchamp@gmail.com
 
-CSRC = Attribute.c Element.c List.c Error.c
+CSRC = Attribute.c Element.c List.c Error.c Utils.c
 YACCSRC = Yacc.y
 LEXSRC = Lex.l
 TESTS = testList.c testPrettyPrint.c colorizeXML.c #testLex.c testYacc.c testLexYacc.c colorizeXML.c

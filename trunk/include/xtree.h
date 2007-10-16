@@ -6,5 +6,6 @@
 #include "xtree/List.h"
 #include "xtree/Attribute.h"
 #include "xtree/Element.h"
+#include "xtree/Utils.h"
 
 #endif
