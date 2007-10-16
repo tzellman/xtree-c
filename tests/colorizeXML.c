@@ -12,6 +12,36 @@
 /* global gElement used in Yacc.y */
 extern xtree_Element *gElement;
 
+void escapePrint(char c)
+{
+    switch(c)
+    {
+    case '<':
+        printf("&lt;");
+        break;
+    case '>':
+        printf("&gt;");
+        break;
+    case '\n':
+        printf("<br />\n");
+        break;
+    default:
+        printf("%c", c);
+    }
+}
+
+printEscapedStr(const char* str)
+{
+    int i;
+    for (i = 0 ; i < strlen(str); ++i)
+        escapePrint(str[i]);
+}
+
+int hasNonTextChild(xtree_Element *elem)
+{
+    /* TODO: implement this */
+    return 0;
+}
 
 void iterateTree(xtree_Element *elem, int depth)
 {
@@ -24,17 +54,24 @@ void iterateTree(xtree_Element *elem, int depth)
     }
     
     /* if a comment or text, just output the data */
-    if ((elem->elemType == XTREE_TEXT ||
-        elem->elemType == XTREE_COMMENT) && elem->data)
+    if (elem->elemType == XTREE_TEXT
+         && elem->data)
     {
-        printf("%s\n", elem->data);
+        /*printf("%s\n", elem->data);*/
+        printEscapedStr(elem->data);
+    }
+    else if (elem->elemType == XTREE_COMMENT && elem->data)
+    {
+        printEscapedStr(elem->data);
     }
     else
     {
         if (elem->tag && elem->elemType != XTREE_ROOT)
         {
             xtree_ListNode *attrNode = NULL;
-            printf("<%s", elem->tag);
+            /*printf("<%s", elem->tag);*/
+            printEscapedStr("<");
+            printEscapedStr(elem->tag);
             attrNode = elem->attributes ? elem->attributes->first : NULL;
             while(attrNode)
             {
@@ -44,9 +81,10 @@ void iterateTree(xtree_Element *elem, int depth)
             }
             if (!elem->isEmpty)
             {
-                printf(">");
-                if (elem->children)
-                    printf("\n");
+                printEscapedStr(">");
+                
+                if (elem->children && hasNonTextChild(elem))
+                    printEscapedStr("\n");
             }
         }
         else if (elem->elemType == XTREE_ROOT)
@@ -64,12 +102,14 @@ void iterateTree(xtree_Element *elem, int depth)
         if (elem->tag && elem->elemType != XTREE_ROOT)
         {
             if (elem->isEmpty)
-                printf("/>\n");
+                printEscapedStr("/>\n");
             else
             {
                 for(i = 0; i < depth && elem->children; ++i)
                     printf("\t");
-                printf("</%s>\n", elem->tag);
+                printEscapedStr("</");
+                printEscapedStr(elem->tag);
+                printEscapedStr(">\n");
             }
         }
     }
@@ -133,7 +173,7 @@ int main(int argc, char **argv)
     xtree_Error err;
     if (argc != 2)
     {
-        printf("usage: %s: [html template file]\n");
+        printf("usage: %s: [html template file]\n", argv[0]);
         exit(EXIT_SUCCESS);
     }
 
@@ -142,7 +182,10 @@ int main(int argc, char **argv)
 
     gElement = xtree_Element_construct(NULL, NULL, XTREE_ROOT);
     yyparse();
+
+    fprintf(stdout, "%s\n", buffers[0]);
     iterateTree(gElement, 0);
+    fprintf(stdout, "%s\n", buffers[1]);
     
     return 0;
 }
