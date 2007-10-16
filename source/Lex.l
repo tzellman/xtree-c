@@ -22,6 +22,7 @@ Digit           [0-9]
 NameChar        {Letter}|{Digit}|[-._:]
 Name            ({Letter}|[_:]){NameChar}*
 Comment         "<!--"[^-]*[-]{2,}([^->][^-]*[-]{2,})*">"
+CData           "<![CDATA["[^\]]*[\]]{2,}([^\]>][^\]]*[\]]{2,})*">"
 CharData        [^<&]*
 AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
 
@@ -117,6 +118,11 @@ AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
                     xtree_Element_addCommentChild(gElement, yytext);
                     return COMMENT;
                 }
+{CData}         {
+                    xtree_Element_addCDataChild(gElement, yytext);
+                    return CDATA;
+                }
 
 [\n]            ; /* ignore */
+.               ; /* ignore ? */
 %%
