@@ -19,7 +19,8 @@ void iterateTree(xtree_Element *elem, int depth)
     
     /* if a comment or text, just output the data */
     if ((elem->elemType == XTREE_TEXT ||
-        elem->elemType == XTREE_COMMENT) && elem->data)
+        elem->elemType == XTREE_COMMENT ||
+        elem->elemType == XTREE_CDATA) && elem->data)
     {
         printf("%s\n", elem->data);
     }
