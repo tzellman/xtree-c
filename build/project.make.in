@@ -7,4 +7,4 @@ MAINTAINER = tzellman@gmail.com, adam.beauchamp@gmail.com
 CSRC = Attribute.c Element.c List.c Error.c
 YACCSRC = Yacc.y
 LEXSRC = Lex.l
-TESTS = testList.c testPrettyPrint.c #testLex.c testYacc.c testLexYacc.c colorizeXML.c
+TESTS = testList.c testPrettyPrint.c colorizeXML.c #testLex.c testYacc.c testLexYacc.c colorizeXML.c

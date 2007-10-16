@@ -1,12 +1,13 @@
 #include <stdio.h>
-#include "Yacc.h"
-#include "xtree/Element.h"
-
-#include "xtree/System.h"
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
+
+#include "Yacc.h"
+#include "xtree/Element.h"
+#include "xtree/Error.h"
+
 
 /* global gElement used in Yacc.y */
 extern xtree_Element *gElement;
@@ -76,19 +77,18 @@ void iterateTree(xtree_Element *elem, int depth)
 
 /*
      Convention: program will look for the first line
-         starting with an empty comment to use as the starting point
-         for inserting the generated comment
+         that contains only whitespace to use as the starting point
+         for inserting the generated content
  */
 
 #define BUF_SIZE 4096
 
-char** readTemplateFileIntoBuffers(char* path, Sys_Error* err)
+void readTemplateFileIntoBuffers(char** buffers, char* path, xtree_Error* err)
 {
-    char* buf[BUF_SIZE];                /* buffer for the file input*/
-    FILE* tfile;                        /* template file ptr */
-    char* buffers[2];                   /* return buffers */
+    char buf[BUF_SIZE];                 /* buffer for the file input*/
     ssize_t nBytesRead;                 /* num bytes read */
     int fd = -1;                        /* file descriptor */
+    int i = 0;                          /* iterator */
 
     memset(buf, 0, BUF_SIZE);
  
@@ -96,20 +96,30 @@ char** readTemplateFileIntoBuffers(char* path, Sys_Error* err)
     if (fd == -1)
     {
         /* TODO: use the errno in this */
-        SYS_ERROR(err, "Couldn't open template file for reading");
-        goto ERR_EXIT;
+        XTREE_ERROR(err, "Couldn't open template file for reading");
+        goto FUNC_EXIT;
     }
 
-    while ( (nBytesRead = read(fd, (void*)buf, BUF_SIZE)) > 0  )
-    {
-        /* do something w/ this */
-        printf("%s\n", buf);
-    }
+    /* TODO: make this more robust (allow larger templates */
+    nBytesRead = read(fd, (void*)buf, BUF_SIZE);
     
+    
+    for (i = 0; i < nBytesRead; ++i)
+        if (buf[i] == '\n' && buf[i+1] == '\n')
+            break;
 
-ERR_EXIT:
+    buffers[0] = calloc(i+1, sizeof(char));
+    buffers[1] = calloc(nBytesRead-i+1, sizeof(char));
+    if (buffers[0] == NULL || buffers[1] == NULL)
+    {
+        XTREE_ERROR(err, "couldn't allocate space for templates");
+        goto FUNC_EXIT;
+    }
+    strncpy(buffers[0], buf, i);
+    strncpy(buffers[1], &buf[i], nBytesRead-i);
+
+FUNC_EXIT:
     if (fd != -1) close(fd);
-    return buffers;
 
 } 
 
@@ -120,21 +130,20 @@ int main(int argc, char **argv)
      * generated document
      */
     char* buffers[2];
-    Sys_Error err;
+    xtree_Error err;
     if (argc != 2)
     {
-        printf("usage: %s: [html template file]");
+        printf("usage: %s: [html template file]\n");
         exit(EXIT_SUCCESS);
     }
 
-    /*Sys_Error_init(&err);*/
-    readTemplateFileIntoBuffers(argv[1], &err);
+    xtree_Error_init(&err);
+    readTemplateFileIntoBuffers(buffers, argv[1], &err);
 
-    /*
     gElement = xtree_Element_construct(NULL, NULL, XTREE_ROOT);
     yyparse();
     iterateTree(gElement, 0);
-    */
     
     return 0;
 }
+
