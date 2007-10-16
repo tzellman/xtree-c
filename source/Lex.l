@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 #include "Yacc.h"
 #include "xtree/Element.h"
 
@@ -103,7 +104,7 @@ AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
                     char* text = yyStrippedText();
                     if (text)
                     {
-                        xtree_Element_addTextChild(gElement, yytext);
+                        xtree_Element_addTextChild(gElement, text);
                         free(text);
                     }
                 }
@@ -126,21 +127,26 @@ AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
 
 char* yyStrippedText()
 {
-    int start, end;
-    char* text = NULL;
-    for (start = 0; start < yyleng; ++start)
-        if (!isspace(yytext[start]))
-            break;
+    char *tok = NULL, *text = NULL;
+    int first = 1;
+    text = malloc(yyleng + 1);
+    memset(text, 0, yyleng + 1);
     
-    for (end = yyleng - 1; end >= 0; --end)
-        if (!isspace(yytext[end]))
-            break;
-   
-    if (yyleng <= 0 || end < start)
-        return NULL; /* all spaces */
+    tok = strtok(yytext, " \n\t");
+    while(tok != NULL)
+    {
+        if (!first)
+            strcat(text, " ");
+        strcat(text, tok);
+        tok = strtok(NULL, " \n\t");
+        first = 0;
+    }
     
-    text = malloc(end - start + 2);
-    strncpy(text, yytext + start, end - start + 1);
+    if (strlen(text) == 0)
+    {
+        free(text);
+        text = NULL;
+    }
     return text;
 }
 

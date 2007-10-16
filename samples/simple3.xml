@@ -1,9 +1,12 @@
 <!---- top level comment -- -->
 <a>
 <!-- internal comment 1 -->
-<b att="val"></b>
+<!-- another internal comment
+
+-->
+<b att="val">some text inside b</b>
 
 <!-- internal comment 2 -->
-<c/></a>
+<c/>some text inside a        </a>
 
 <!-- end of document comment -->
