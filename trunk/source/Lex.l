@@ -126,13 +126,11 @@ EntityRef       "&"{Name}";"
 
 {CharRef}       {
                     xtree_Element_addTextChild(gElement, XTREE_CHAR_REF, yytext);
-                    printf("charref: %s\n", yytext);
                     return REFERENCE;
                 }
 
 {EntityRef}     {
                     xtree_Element_addTextChild(gElement, XTREE_ENTITY_REF, yytext);
-                    printf("entityref: %s\n", yytext);
                     return REFERENCE;
                 }
 
