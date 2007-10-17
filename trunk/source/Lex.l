@@ -16,6 +16,7 @@ char* yyStrippedText();
 %x startElement
 %s endElement
 %x attribute
+%x declaration
 
 Ws              [ \t\r\n]+
 Letter          [A-Za-z]
@@ -28,13 +29,13 @@ CharData        [^<&]*
 AttValue        (\"[^<&"]*\")|("'"[^<&']*"'")
 CharRef         "&#"[0-9]+";"|"&#x"[0-9a-fA-F]+";"
 EntityRef       "&"{Name}";"
-Char            [\t\n\r\x20-#xFF]
+Char            [\t\n\r\x20-\xFF]
 VersionNum      "1.0"
 VersionInfo     {Ws}"version"{Ws}?"="{Ws}?("'"{VersionNum}"'"|\"{VersionNum}\")
 EncName         [A-Za-z]([A-Za-z0-9._]|"-")*
 EncodingDecl    {Ws}"encoding"{Ws}?"="{Ws}?(\"{EncName}\"|"'"{EncName}"'")
 SDDecl          {Ws}"standalone"{Ws}?"="{Ws}?(("'"("yes"|"no")"'")|(\"("yes"|"no")\"))
-XMLDecl         "<?xml"{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
+XMLDecl         "<?"[xX][mM][lL]{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
 
 %%
 
@@ -122,6 +123,13 @@ XMLDecl         "<?xml"{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
 
 }
 
+
+{XMLDecl}       {
+                    xtree_Element_addTextChild(gElement, XTREE_XML_DECL, yytext);
+                    return XML_DECL;
+                }
+
+
 {Comment}       {
                     xtree_Element_addTextChild(gElement, XTREE_COMMENT, yytext);
                     return COMMENT;
@@ -140,11 +148,6 @@ XMLDecl         "<?xml"{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
 {EntityRef}     {
                     xtree_Element_addTextChild(gElement, XTREE_ENTITY_REF, yytext);
                     return REFERENCE;
-                }
-
-{XMLDecl}       {
-                    xtree_Element_addTextChild(gElement, XTREE_XML_DECL, yytext);
-                    return XML_DECL;
                 }
 
 [\n]            ; /* ignore */
