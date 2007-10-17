@@ -17,7 +17,7 @@ char* yyStrippedText();
 %s endElement
 %x attribute
 
-Ws              [ \t\r\n]
+Ws              [ \t\r\n]+
 Letter          [A-Za-z]
 Digit           [0-9]
 NameChar        {Letter}|{Digit}|[-._:]
@@ -28,6 +28,13 @@ CharData        [^<&]*
 AttValue        (\"[^<&"]*\")|("'"[^<&']*"'")
 CharRef         "&#"[0-9]+";"|"&#x"[0-9a-fA-F]+";"
 EntityRef       "&"{Name}";"
+Char            [\t\n\r\x20-#xFF]
+VersionNum      "1.0"
+VersionInfo     {Ws}"version"{Ws}?"="{Ws}?("'"{VersionNum}"'"|\"{VersionNum}\")
+EncName         [A-Za-z]([A-Za-z0-9._]|"-")*
+EncodingDecl    {Ws}"encoding"{Ws}?"="{Ws}?(\"{EncName}\"|"'"{EncName}"'")
+SDDecl          {Ws}"standalone"{Ws}?"="{Ws}?(("'"("yes"|"no")"'")|(\"("yes"|"no")\"))
+XMLDecl         "<?xml"{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
 
 %%
 
@@ -43,13 +50,13 @@ EntityRef       "&"{Name}";"
 
 <attribute>{
 
-{Name}{Ws}*[=]    {
+{Name}{Ws}?[=]    {
                     yyless(yyleng - 1); /* put back the equals sign */
                     /* get the attribute name */
                     /* TODO - strip the spaces from the name */
                     xtree_Element_addAttribute(gElement, yytext, NULL);
                 }
-[=]{Ws}*        ;   /* ignore */
+[=]{Ws}?        ;   /* ignore */
 {AttValue}      {
                     char* value = NULL;
                     xtree_Attribute *attr =
@@ -66,7 +73,7 @@ EntityRef       "&"{Name}";"
 
 
 <startElement>{
-{Name}{Ws}*[=]{Ws}*["']    {
+{Name}{Ws}?[=]{Ws}?["']    {
                                 /* this is an attribute, so let's use those rules */
                                 yy_push_state(attribute);
                                 yyless(0);  /* put back the entire lexeme */
@@ -133,6 +140,11 @@ EntityRef       "&"{Name}";"
 {EntityRef}     {
                     xtree_Element_addTextChild(gElement, XTREE_ENTITY_REF, yytext);
                     return REFERENCE;
+                }
+
+{XMLDecl}       {
+                    xtree_Element_addTextChild(gElement, XTREE_XML_DECL, yytext);
+                    return XML_DECL;
                 }
 
 [\n]            ; /* ignore */

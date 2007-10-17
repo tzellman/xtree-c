@@ -68,6 +68,26 @@ void iterateTree(xtree_Element *elem, int depth)
         printEscapedStr(elem->data);
         printf("</div>\n");
     }
+    else if (elem->elemType == XTREE_CDATA && elem->data)
+    {
+        printf("<div class=\"cdata\">\n");
+        printEscapedStr(elem->data);
+        printf("</div>\n");
+    }
+    else if ((elem->elemType == XTREE_ENTITY_REF
+        || elem->elemType == XTREE_CHAR_REF)
+        && elem->data)
+    {
+        printf("<div class=\"reference\">\n");
+        printEscapedStr(elem->data);
+        printf("</div>\n");
+    }
+    else if (elem->elemType == XTREE_XML_DECL && elem->data)
+    {
+        printf("<div class=\"xmlDecl\">\n");
+        printEscapedStr(elem->data);
+        printf("</div>\n");
+    }
     else
     {
         if (elem->tag && elem->elemType != XTREE_ROOT)
