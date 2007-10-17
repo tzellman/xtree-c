@@ -58,13 +58,13 @@ void iterateTree(xtree_Element *elem, int depth)
          && elem->data)
     {
         /*printf("%s\n", elem->data);*/
-        printf("<span>");
+        printf("<span class=\"text\">");
         printEscapedStr(elem->data);
         printf("</span>");
     }
     else if (elem->elemType == XTREE_COMMENT && elem->data)
     {
-        printf("<div>\n");
+        printf("<div class=\"comment\">\n");
         printEscapedStr(elem->data);
         printf("</div>\n");
     }
@@ -76,22 +76,19 @@ void iterateTree(xtree_Element *elem, int depth)
             /*printf("<%s", elem->tag);*/
             printf("<div>\n");
             printEscapedStr("<");
+            printf("<span class=\"tagname\">");
             printEscapedStr(elem->tag);
+            printf("</span>");
             attrNode = elem->attributes ? elem->attributes->first : NULL;
             while(attrNode)
             {
-                printf("<span>");
                 xtree_Attribute *attr = (xtree_Attribute*)attrNode->data;
-                printf(" %s=%s", attr->name, attr->value);
+                printf(" <span class=\"attrKey\">%s</span>=<span class=\"attrVal\">%s</span> ", attr->name, attr->value);
                 attrNode = attrNode->next;
-                printf("</span>");
             }
             if (!elem->isEmpty)
             {
                 printEscapedStr(">");
-                
-                if (elem->children && hasNonTextChild(elem))
-                    printEscapedStr("\n");
             }
         }
         else if (elem->elemType == XTREE_ROOT)
@@ -115,7 +112,9 @@ void iterateTree(xtree_Element *elem, int depth)
                 for(i = 0; i < depth && elem->children; ++i)
                     printf("\t");
                 printEscapedStr("</");
+                printf("<span class=\"tagname\">");
                 printEscapedStr(elem->tag);
+                printf("</span>");
                 printEscapedStr(">\n");
             }
             printf("</div>\n");
