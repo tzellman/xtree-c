@@ -20,3 +20,5 @@ raw: clean
 	cd tests; make raw
 	cd build; rm -f Makefile; rm -f project.make
 	rm -f Makefile
+
+fresh: clean all
