@@ -25,6 +25,8 @@ Comment         "<!--"[^-]*[-]{2,}([^->][^-]*[-]{2,})*">"
 CData           "<![CDATA["[^\]]*[\]]{2,}([^\]>][^\]]*[\]]{2,})*">"
 CharData        [^<&]*
 AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
+CharRef         "&#"[0-9]+";"|"&#x"[0-9a-fA-F]+";"
+EntityRef       "&"{Name}";"
 
 %%
 
@@ -105,22 +107,33 @@ AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
                      */
                     char* text = xtree_compactWhitespace(yytext, 1);
                     if (text)
-                        xtree_Element_addTextChild(gElement, text);
+                        xtree_Element_addTextChild(gElement, XTREE_TEXT, text);
                 }
 
 [ \t\n]         ; /* ignore whitespace */
 
 }
 
-
-
 {Comment}       {
-                    xtree_Element_addCommentChild(gElement, yytext);
+                    xtree_Element_addTextChild(gElement, XTREE_COMMENT, yytext);
                     return COMMENT;
                 }
+
 {CData}         {
-                    xtree_Element_addCDataChild(gElement, yytext);
+                    xtree_Element_addTextChild(gElement, XTREE_CDATA, yytext);
                     return CDATA;
+                }
+
+{CharRef}       {
+                    xtree_Element_addTextChild(gElement, XTREE_CHAR_REF, yytext);
+                    printf("charref: %s\n", yytext);
+                    return REFERENCE;
+                }
+
+{EntityRef}     {
+                    xtree_Element_addTextChild(gElement, XTREE_ENTITY_REF, yytext);
+                    printf("entityref: %s\n", yytext);
+                    return REFERENCE;
                 }
 
 [\n]            ; /* ignore */

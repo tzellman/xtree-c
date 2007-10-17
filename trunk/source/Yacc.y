@@ -7,7 +7,7 @@ int yylex(void);
 %}
 
 %token START_TAG END_EMPTY_TAG END_TAG
-%token ATTRIBUTE COMMENT CDATA
+%token ATTRIBUTE COMMENT CDATA REFERENCE
 
 %%
 
@@ -43,6 +43,7 @@ content:
         element
         | COMMENT
         | CDATA
+        | REFERENCE
         ;
 
 contentList:

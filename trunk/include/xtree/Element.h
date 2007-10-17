@@ -11,11 +11,14 @@
  */
 enum
 {
-    XTREE_ELEMENT = 0,      /** The basic element type */
+    XTREE_ROOT = 0,         /** Only used for top-level root elements */
+    XTREE_ELEMENT,          /** The basic element type */
     XTREE_TEXT,             /** An element that is a text node */
     XTREE_COMMENT,          /** An element representing a comment */
     XTREE_CDATA,            /** An element representing CDATA */
-    XTREE_ROOT              /** Only used for top-level root elements */
+    XTREE_ENTITY_REF,       /** An element representing an entity reference */
+    XTREE_CHAR_REF,         /** An element representing a character reference */
+    XTREE_NO_TYPE           /** Sentinel used to represent the type boundary */
 };
 
 /**
@@ -76,27 +79,12 @@ PUBFUNC(xtree_Element*) xtree_Element_addChild(xtree_Element *elem,
 
 /**
  * Shortcut for:
- *      Element *newElem = xtree_Element_addChild(elem, NULL, XTREE_TEXT);
+ *      Element *newElem = xtree_Element_addChild(elem, NULL, elemType);
  *      xtree_Element_setData(newElem, data);
  */ 
 PUBFUNC(xtree_Element*) xtree_Element_addTextChild(xtree_Element *elem,
+                                                   int elemType,
                                                    char *data);
-
-/**
- * Shortcut for:
- *      Element *newElem = xtree_Element_addChild(elem, NULL, XTREE_CDATA);
- *      xtree_Element_setData(newElem, data);
- */ 
-PUBFUNC(xtree_Element*) xtree_Element_addCDataChild(xtree_Element *elem,
-                                                    char *data);
-
-/**
- * Shortcut for:
- *      Element *newElem = xtree_Element_addChild(elem, NULL, XTREE_COMMENT);
- *      xtree_Element_setData(newElem, data);
- */ 
-PUBFUNC(xtree_Element*) xtree_Element_addCommentChild(xtree_Element *elem,
-                                                      char *data);
 
 /**
  * Creates and adds an Attribute to this element
