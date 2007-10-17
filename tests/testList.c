@@ -68,10 +68,10 @@ int main(int argc, char **argv)
     elem1 = xtree_Element_addChild(root, "html", XTREE_ELEMENT);
     elem2 = xtree_Element_addChild(elem1, "body", XTREE_ELEMENT);
     elem3 = xtree_Element_addChild(elem2, "div", XTREE_ELEMENT);
-    xtree_Element_addTextChild(elem2, "tail text");
-    xtree_Element_addCommentChild(elem2, "<!-- a comment -->");
+    xtree_Element_addTextChild(elem2, XTREE_TEXT, "tail text");
+    xtree_Element_addTextChild(elem2, XTREE_COMMENT, "<!-- a comment -->");
     elem4 = xtree_Element_addChild(elem2, "span", XTREE_ELEMENT);
-    xtree_Element_addTextChild(elem4, "some text");
+    xtree_Element_addTextChild(elem4, XTREE_TEXT, "some text");
     xtree_Element_addAttribute(elem4, "class", "\"spanClass\"");
     
     /* now, add a head, later on */

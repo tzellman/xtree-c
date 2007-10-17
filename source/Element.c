@@ -89,27 +89,10 @@ PUBFUNC(xtree_Element*) xtree_Element_addChild(xtree_Element *elem,
 }
 
 PUBFUNC(xtree_Element*) xtree_Element_addTextChild(xtree_Element *elem,
+                                                   int elemType,
                                                    char *data)
 {
-    xtree_Element *child = xtree_Element_addChild(elem, NULL, XTREE_TEXT);
-    if (child)
-        xtree_Element_setData(child, data);
-    return child;
-}
-
-PUBFUNC(xtree_Element*) xtree_Element_addCDataChild(xtree_Element *elem,
-                                                    char *data)
-{
-    xtree_Element *child = xtree_Element_addChild(elem, NULL, XTREE_CDATA);
-    if (child)
-        xtree_Element_setData(child, data);
-    return child;
-}
-
-PUBFUNC(xtree_Element*) xtree_Element_addCommentChild(xtree_Element *elem,
-                                                      char *data)
-{
-    xtree_Element *child = xtree_Element_addChild(elem, NULL, XTREE_COMMENT);
+    xtree_Element *child = xtree_Element_addChild(elem, NULL, elemType);
     if (child)
         xtree_Element_setData(child, data);
     return child;
