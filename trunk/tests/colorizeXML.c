@@ -58,9 +58,9 @@ void iterateTree(xtree_Element *elem, int depth)
          && elem->data)
     {
         /*printf("%s\n", elem->data);*/
-        printf("<span class=\"text\">");
+        printf("<div class=\"text\">");
         printEscapedStr(elem->data);
-        printf("</span>");
+        printf("</div>");
     }
     else if (elem->elemType == XTREE_COMMENT && elem->data)
     {

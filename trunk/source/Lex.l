@@ -17,6 +17,7 @@ char* yyStrippedText();
 %s endElement
 %x attribute
 
+Ws              [ \t\r\n]
 Letter          [A-Za-z]
 Digit           [0-9]
 NameChar        {Letter}|{Digit}|[-._:]
@@ -24,7 +25,7 @@ Name            ({Letter}|[_:]){NameChar}*
 Comment         "<!--"[^-]*[-]{2,}([^->][^-]*[-]{2,})*">"
 CData           "<![CDATA["[^\]]*[\]]{2,}([^\]>][^\]]*[\]]{2,})*">"
 CharData        [^<&]*
-AttValue        (\"[^<&"]*\")|("'"[^<&']"'")
+AttValue        (\"[^<&"]*\")|("'"[^<&']*"'")
 CharRef         "&#"[0-9]+";"|"&#x"[0-9a-fA-F]+";"
 EntityRef       "&"{Name}";"
 
@@ -42,13 +43,13 @@ EntityRef       "&"{Name}";"
 
 <attribute>{
 
-{Name}\s*[=]    {
+{Name}{Ws}*[=]    {
                     yyless(yyleng - 1); /* put back the equals sign */
                     /* get the attribute name */
                     /* TODO - strip the spaces from the name */
                     xtree_Element_addAttribute(gElement, yytext, NULL);
                 }
-[=]\s*          ;   /* ignore */
+[=]{Ws}*        ;   /* ignore */
 {AttValue}      {
                     char* value = NULL;
                     xtree_Attribute *attr =
@@ -65,11 +66,11 @@ EntityRef       "&"{Name}";"
 
 
 <startElement>{
-{Name}\s*[=]["']    {
-                        /* this is an attribute, so let's use those rules */
-                        yy_push_state(attribute);
-                        yyless(0);  /* put back the entire lexeme */
-                    }
+{Name}{Ws}*[=]{Ws}*["']    {
+                                /* this is an attribute, so let's use those rules */
+                                yy_push_state(attribute);
+                                yyless(0);  /* put back the entire lexeme */
+                           }
 
 "/>"            {
                     yy_pop_state();
