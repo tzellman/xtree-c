@@ -18,6 +18,7 @@ enum
     XTREE_CDATA,            /** An element representing CDATA */
     XTREE_ENTITY_REF,       /** An element representing an entity reference */
     XTREE_CHAR_REF,         /** An element representing a character reference */
+    XTREE_XML_DECL,         /** An element representing an XML Declaration */
     XTREE_NO_TYPE           /** Sentinel used to represent the type boundary */
 };
 

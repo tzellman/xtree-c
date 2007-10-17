@@ -7,7 +7,7 @@ int yylex(void);
 %}
 
 %token START_TAG END_EMPTY_TAG END_TAG
-%token ATTRIBUTE COMMENT CDATA REFERENCE
+%token ATTRIBUTE COMMENT CDATA REFERENCE XML_DECL
 
 %%
 
@@ -16,7 +16,8 @@ document:
         ;
 
 prolog:
-        misc
+        XML_DECL misc
+        | misc
         ;
 
 misc:
