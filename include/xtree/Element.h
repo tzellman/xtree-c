@@ -19,6 +19,7 @@ enum
     XTREE_ENTITY_REF,       /** An element representing an entity reference */
     XTREE_CHAR_REF,         /** An element representing a character reference */
     XTREE_XML_DECL,         /** An element representing an XML Declaration */
+    XTREE_PI,               /** An element representing a Processing Instruction */
     XTREE_NO_TYPE           /** Sentinel used to represent the type boundary */
 };
 

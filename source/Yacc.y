@@ -7,7 +7,8 @@ int yylex(void);
 %}
 
 %token START_TAG END_EMPTY_TAG END_TAG
-%token ATTRIBUTE COMMENT CDATA REFERENCE XML_DECL
+%token ATTRIBUTE COMMENT CDATA REFERENCE XML_DECL PROC_INSTR
+%token SYNTAX_ERROR
 
 %%
 
@@ -22,6 +23,7 @@ prolog:
 
 misc:
         COMMENT
+        | PROC_INSTR
         |
         ;
 
@@ -45,6 +47,7 @@ content:
         | COMMENT
         | CDATA
         | REFERENCE
+        | PROC_INSTR
         ;
 
 contentList:
