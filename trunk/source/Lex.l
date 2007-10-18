@@ -16,9 +16,11 @@ char* yyStrippedText();
 %x startElement
 %s endElement
 %x attribute
-%x declaration
+%x xmlDecl
+%x processingInstruction
 
-Ws              [ \t\r\n]+
+
+Ws              ([ \t\r\n]+)
 Letter          [A-Za-z]
 Digit           [0-9]
 NameChar        {Letter}|{Digit}|[-._:]
@@ -36,6 +38,31 @@ EncName         [A-Za-z]([A-Za-z0-9._]|"-")*
 EncodingDecl    {Ws}"encoding"{Ws}?"="{Ws}?(\"{EncName}\"|"'"{EncName}"'")
 SDDecl          {Ws}"standalone"{Ws}?"="{Ws}?(("'"("yes"|"no")"'")|(\"("yes"|"no")\"))
 XMLDecl         "<?"[xX][mM][lL]{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
+TextDecl        "<?"[xX][mM][lL]{VersionInfo}{EncodingDecl}?{Ws}?"?>"
+UnknownDecl     "<?"{Name}[^?]*[?]+([^?>][^?]*[?]+)*">"
+PI              "<?"{Name}({Ws}[^?]*)?[?]+([^?>][^?]*[?]+)*">"
+
+
+/********* Not used yet ***************/
+SystemLiteral   (\"[^"]*\")|("'"[^']*"'")
+PubidCharNoQuote [ \r\na-zA-Z0-9]|[-()+,./:=?;!*#@$_%]
+PubidChar       {PubidChar}|"'"
+PubidLiteral    \"{PubidChar}*\"|"'"{PubidCharNoQuote}*"'"
+ExternalID      ("SYSTEM"{Ws}{SystemLiteral})|("PUBLIC"{Ws}{PubidLiteral}{Ws}{SystemLiteral})
+PEReference     "%"{Name}";"
+DeclSep         {PEReference}|{Ws}
+
+DefaultDecl     "#REQUIRED"|"#IMPLIED"|(("#FIXED"{Ws})?{AttValue})
+AttDef          {Ws}{Name}{Ws}{AttType}{Ws}{DefaultDecl}
+AttlistDecl     "<!ATTLIST"{Ws}{Name}{AttDef}*{Ws}?">"
+
+Mixed           "("{Ws}?"#PCDATA"({Ws}?"|"{Ws}?{Name})*{Ws}?")*"|"("{Ws}?"#PCDATA"{Ws}?")"
+contentspec     "EMPTY"|"ANY"|{Mixed}
+elementdecl     "<!ELEMENT"{Ws}{Name}{Ws}{contentspec}{Ws}?">"
+markupdecl      {elementdecl}|{AttlistDecl}|{Comment}
+intSubset       ({markupdecl}|{DeclSep})*
+/********* End not used yet ***********/
+
 
 %%
 
@@ -118,16 +145,48 @@ XMLDecl         "<?"[xX][mM][lL]{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
                     if (text)
                         xtree_Element_addTextChild(gElement, XTREE_TEXT, text);
                 }
-
-[ \t\n]         ; /* ignore whitespace */
-
 }
 
 
+{UnknownDecl}   {
+                    /* check to see if it is likely an XMLDecl */
+                    /* If it is not, we attempt to match with a PI */
+                    if (yyleng >= 5 && strncmp((char*)(yytext + 2), "xml", 3) == 0)
+                    {
+                        if (yyleng == 5 || (isspace(yytext[5]) || yytext[5] == '?'))
+                            yy_push_state(xmlDecl);
+                        else
+                            yy_push_state(processingInstruction);
+                    }
+                    else
+                        yy_push_state(processingInstruction);
+                    yyless(0);
+                }
+
+
+<xmlDecl>{
 {XMLDecl}       {
+                    yy_pop_state();
                     xtree_Element_addTextChild(gElement, XTREE_XML_DECL, yytext);
                     return XML_DECL;
                 }
+{UnknownDecl}   {
+                    /* Basically, if we don't match the XMLDecl exactly, then
+                     * we fall in here... and an error is returned
+                     */
+                    yy_pop_state();
+                    /*printf("Invalid XMLDECL: %s\n", yytext);*/
+                    return SYNTAX_ERROR;
+                }
+}
+
+<processingInstruction>{
+{PI}            {
+                    yy_pop_state();
+                    xtree_Element_addTextChild(gElement, XTREE_PI, yytext);
+                    return PROC_INSTR;
+                }
+}
 
 
 {Comment}       {
@@ -150,6 +209,6 @@ XMLDecl         "<?"[xX][mM][lL]{VersionInfo}{EncodingDecl}?{SDDecl}?{Ws}?"?>"
                     return REFERENCE;
                 }
 
-[\n]            ; /* ignore */
+[\n\r]          ; /* ignore */
 .               ; /* ignore ? */
 %%

@@ -1,0 +1,4 @@
+
+- add children back to contentspec
+- add |{EntityDecl}|{NotationDecl} to markupdecl
+

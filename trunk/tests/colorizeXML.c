@@ -88,6 +88,12 @@ void iterateTree(xtree_Element *elem, int depth)
         printEscapedStr(elem->data);
         printf("</div>\n");
     }
+    else if (elem->elemType == XTREE_PI && elem->data)
+    {
+        printf("<div class=\"procInstr\">\n");
+        printEscapedStr(elem->data);
+        printf("</div>\n");
+    }
     else
     {
         if (elem->tag && elem->elemType != XTREE_ROOT)
