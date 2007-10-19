@@ -30,5 +30,11 @@
 /*  Private declarations.  */
 #define PRIVFUNC(RT) static RT
 
+typedef int         XTREE_BOOL;
+enum{
+    XTREE_FALSE = 0,
+    XTREE_TRUE
+};    
+
 #endif
 
