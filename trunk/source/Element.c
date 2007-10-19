@@ -32,30 +32,30 @@ PUBFUNC(void) xtree_Element_destruct(xtree_Element **elem)
         if ((*elem)->children)
         {
             xtree_Element *data = NULL;
-            xtree_ListNode *cur = (*elem)->children->last;
-            while(cur)
+            xtree_ListIterator iter, end;
+            iter = xtree_List_begin((*elem)->children);
+            end = xtree_List_end((*elem)->children);
+            while(!xtree_ListIterator_equals(&iter, &end))
             {
-                if (cur->data)
-                {
-                    data = (xtree_Element*)cur->data;
+                data = (xtree_Element*)xtree_ListIterator_get(&iter);
+                if (data)
                     xtree_Element_destruct(&data);
-                }
-                cur = cur->prev;
+                xtree_ListIterator_increment(&iter);
             }
             xtree_List_destruct(&(*elem)->children);
         }
         if ((*elem)->attributes)
         {
             xtree_Attribute *data = NULL;
-            xtree_ListNode *cur = (*elem)->attributes->last;
-            while(cur)
+            xtree_ListIterator iter, end;
+            iter = xtree_List_begin((*elem)->attributes);
+            end = xtree_List_end((*elem)->attributes);
+            while(!xtree_ListIterator_equals(&iter, &end))
             {
-                if (cur->data)
-                {
-                    data = (xtree_Attribute*)cur->data;
+                data = (xtree_Attribute*)xtree_ListIterator_get(&iter);
+                if (data)
                     xtree_Attribute_destruct(&data);
-                }
-                cur = cur->prev;
+                xtree_ListIterator_increment(&iter);
             }
             xtree_List_destruct(&(*elem)->attributes);
         }
