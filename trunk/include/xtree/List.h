@@ -1,10 +1,6 @@
 #ifndef __XTREE_LIST_H__
 #define __XTREE_LIST_H__
 
-#include <stdlib.h>
-#include <memory.h>
-#include <assert.h>
-
 #include "xtree/System.h"
 
 /**

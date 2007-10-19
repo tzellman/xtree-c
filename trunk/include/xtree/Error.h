@@ -1,9 +1,6 @@
 #ifndef __XTREE_ERROR_H__
 #define __XTREE_ERROR_H__
 
-#include <memory.h>
-#include <stdio.h>
-
 #define MAX_ERR_MSG 512
 
 typedef struct _xtree_Error

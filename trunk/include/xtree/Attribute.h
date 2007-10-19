@@ -1,9 +1,6 @@
 #ifndef __XTREE_ATTRIBUTE_H__
 #define __XTREE_ATTRIBUTE_H__
 
-#include <stdlib.h>
-#include <memory.h>
-
 #include "xtree/System.h"
 
 typedef struct _xtree_Attribute

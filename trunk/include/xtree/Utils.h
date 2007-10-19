@@ -1,7 +1,6 @@
 #ifndef __XTREE_UTILS_H__
 #define __XTREE_UTILS_H__
 
-#include <string.h>
 #include "xtree/System.h"
 
 /**
