@@ -109,8 +109,7 @@ PUBFUNC(XTREE_BOOL) xtree_List_insert(xtree_List *list,
  * 
  * \return the data at the index, or NULL if an error occurred
  */
-PUBFUNC(void*) xtree_List_remove(xtree_List *list,
-                                 xtree_ListIterator *iter);
+PUBFUNC(void*) xtree_List_remove(xtree_List *list, xtree_ListIterator *iter);
 
 
 /**

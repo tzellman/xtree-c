@@ -7,5 +7,7 @@
 #include "xtree/Attribute.h"
 #include "xtree/Element.h"
 #include "xtree/Utils.h"
+#include "xtree/Pair.h"
+#include "xtree/Map.h"
 
 #endif
