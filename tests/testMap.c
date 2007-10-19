@@ -53,6 +53,34 @@ int main(int argc, char **argv)
         xtree_MapIterator_increment(&iter);
     }
     
+    /* now, let's re-set the number of slots to a larger prime number,
+     * causing a re-hash - the number can be large since this is a sparse
+     * implementation */
+    xtree_Map_setNumSlots(map, 7919);
+    
+    printf("\nRe-hashed the map......\n");
+    printf("\nNew map contents:\n-----------------\n");
+    iter = xtree_Map_begin(map);
+    end = xtree_Map_end(map);
+    while(!xtree_MapIterator_equals(&iter, &end))
+    {
+        pair = xtree_MapIterator_get(&iter);
+        printf("%d) %s: %s\n", iter.index + 1,
+            pair->first, (pair->second ? (char*)pair->second : "<null>"));
+        xtree_MapIterator_increment(&iter);
+    }
+    
+    /* for fun, let's see what these hash to NOW */
+    printf("%d\n", map->hashFunc(map, "string"));
+    printf("%d\n", map->hashFunc(map, "strings"));
+    printf("%d\n", map->hashFunc(map, "tring"));
+    printf("%d\n", map->hashFunc(map, "ttring"));
+    
+    printf("%d\n", map->hashFunc(map, "tom"));
+    printf("%d\n", map->hashFunc(map, "zellman"));
+    printf("%d\n", map->hashFunc(map, "tiffany"));
+    printf("%d\n", map->hashFunc(map, "zell"));
+    printf("%d\n", map->hashFunc(map, "ott"));
     
     xtree_Map_destruct(&map);
     return 0;

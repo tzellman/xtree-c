@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <assert.h>
+#include <string.h>
 
 #ifdef __cplusplus
 #   define EXTERN_C extern "C"

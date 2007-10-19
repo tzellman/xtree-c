@@ -5,7 +5,8 @@
 #include "xtree/List.h"
 #include "xtree/Pair.h"
 
-#define XTREE_MAP_DEFAULT_SLOTS 11
+/* set the default number of slots to be a *reasonable* prime number */
+#define XTREE_MAP_DEFAULT_SLOTS 43
 
 /* Setup the alias: MapNode -> ListNode */
 typedef xtree_ListNode              xtree_MapNode;
@@ -50,8 +51,18 @@ PUBFUNC(xtree_Map*) xtree_Map_construct(unsigned int numSlots);
  */
 PUBFUNC(void) xtree_Map_destruct(xtree_Map **map);
 
+/**
+ * Returns the size of the map: O(1)
+ */
 PUBFUNC(size_t) xtree_Map_getSize(xtree_Map *map);
 
+/**
+ * Sets a value in the Map. If the value already exists, the existing entry is
+ * removed and the new one is added.
+ * \param map   the map
+ * \param key   the lookup key
+ * \param data  the data to store
+ */
 PUBFUNC(void) xtree_Map_set(xtree_Map *map, const char *key, void *data);
 
 /**
@@ -81,6 +92,23 @@ PUBFUNC(xtree_Pair*) xtree_MapIterator_get(xtree_MapIterator *iter);
 
 PUBFUNC(XTREE_BOOL) xtree_MapIterator_equals(xtree_MapIterator *first,
                                              xtree_MapIterator *second);
+
+/**
+ * Sets the hash function to a function of your liking.
+ * This will cause a re-hash of the items in the Map.
+ * \param map   the map
+ * \param func  the new hashing function
+ */
+PUBFUNC(void) xtree_Map_setHashFunc(xtree_Map *map, XTREE_MAP_FUNC func);
+
+/**
+ * Re-sets the number of slots
+ * This will cause a re-hash of the items in the Map.
+ * \param map       the map
+ * \param numSlots  the new number of slots
+ */
+PUBFUNC(void) xtree_Map_setNumSlots(xtree_Map *map, unsigned int numSlots);
+
 
 
 #endif

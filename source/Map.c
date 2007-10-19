@@ -224,3 +224,54 @@ PUBFUNC(XTREE_BOOL) xtree_MapIterator_equals(xtree_MapIterator *first,
 {
     return first == second || (first && second && first->node == second->node);
 }
+
+PRIVFUNC(void) _xtree_Map_remap(xtree_Map *map)
+{
+    int i;
+    xtree_Pair *pair = NULL;
+    xtree_List **tempSlots = NULL;
+    xtree_Map *newMap = xtree_Map_construct(map->numSlots);
+    newMap->hashFunc = map->hashFunc;
+    
+    
+    /* first, go through and re-map everything -- in order! */
+    xtree_MapIterator mapIter, mapEnd;
+    mapIter = xtree_Map_begin(map);
+    mapEnd = xtree_Map_end(map);
+    while(!xtree_MapIterator_equals(&mapIter, &mapEnd))
+    {
+        pair = xtree_MapIterator_get(&mapIter);
+        if (pair)
+            xtree_Map_set(newMap, pair->first, pair->second);
+        /* might be able to remove the item here, to cut down on memory
+         * usage... however, it will cause more Big-O complexity to the algorithm */
+        xtree_MapIterator_increment(&mapIter);
+    }
+    
+    tempSlots = newMap->slots;
+    newMap->slots = map->slots;
+    map->slots = tempSlots;
+    
+    /* copy over the stuff we want */
+    map->size = newMap->size;
+    map->first = newMap->first;
+    map->last = newMap->last;
+    
+    /* NULL out some of the newMap values, and destroy */
+    newMap->first = newMap->last = NULL;
+    newMap->slots = NULL;
+    newMap->size = 0;
+    xtree_Map_destruct(&newMap);
+}
+
+PUBFUNC(void) xtree_Map_setHashFunc(xtree_Map *map, XTREE_MAP_FUNC func)
+{
+    map->hashFunc = func;
+    _xtree_Map_remap(map);
+}
+
+PUBFUNC(void) xtree_Map_setNumSlots(xtree_Map *map, unsigned int numSlots)
+{
+    map->numSlots = numSlots <= 0 ? XTREE_MAP_DEFAULT_SLOTS : numSlots;
+    _xtree_Map_remap(map);
+}
