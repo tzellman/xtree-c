@@ -10,7 +10,7 @@ PRIVFUNC(unsigned int) _xtree_Map_hashKnuth(xtree_Map *map, const char *key)
     char *c = (char*)&key[0];
     int hash = 0, len = strlen(key);
     for (hash=len; len--;)
-        hash = ((hash<<5)^(hash>>27))^*c++;
+        hash = ((hash << 5) ^ (hash >> 27)) ^ *c++;
     return hash % map->numSlots;
 }
 
@@ -188,8 +188,8 @@ PUBFUNC(void*) xtree_Map_remove(xtree_Map *map, const char *key)
 
 PUBFUNC(xtree_MapIterator) xtree_Map_begin(xtree_Map *map)
 {
-    assert(map);
     xtree_MapIterator iter;
+    assert(map);
     iter.node = map ? map->first : NULL;
     iter.index = 0;
     return iter;
@@ -197,8 +197,8 @@ PUBFUNC(xtree_MapIterator) xtree_Map_begin(xtree_Map *map)
 
 PUBFUNC(xtree_MapIterator) xtree_Map_end(xtree_Map *map)
 {
-    assert(map);
     xtree_MapIterator iter;
+    assert(map);
     iter.node = NULL;
     iter.index = 0;
     return iter;
@@ -227,7 +227,6 @@ PUBFUNC(XTREE_BOOL) xtree_MapIterator_equals(xtree_MapIterator *first,
 
 PRIVFUNC(void) _xtree_Map_remap(xtree_Map *map)
 {
-    int i;
     xtree_Pair *pair = NULL;
     xtree_List **tempSlots = NULL;
     xtree_Map *newMap = xtree_Map_construct(map->numSlots);
