@@ -8,6 +8,8 @@
 /* set the default number of slots to be a *reasonable* prime number */
 #define XTREE_MAP_DEFAULT_SLOTS 43
 
+CXX_GUARD
+
 /* Setup the alias: MapNode -> ListNode */
 typedef xtree_ListNode              xtree_MapNode;
 #define xtree_MapNode_construct     xtree_ListNode_construct
@@ -109,6 +111,6 @@ PUBFUNC(void) xtree_Map_setHashFunc(xtree_Map *map, XTREE_MAP_FUNC func);
  */
 PUBFUNC(void) xtree_Map_setNumSlots(xtree_Map *map, unsigned int numSlots);
 
-
+CXX_ENDGUARD
 
 #endif

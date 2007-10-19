@@ -5,6 +5,7 @@
 #include "xtree/List.h"
 #include "xtree/Attribute.h"
 
+CXX_GUARD
 
 /**
  * Enumeration of Element types
@@ -110,5 +111,7 @@ PUBFUNC(xtree_Attribute*) xtree_Element_addAttribute(xtree_Element *elem,
  * \param data  the data of the Element
  */
 PUBFUNC(void) xtree_Element_setData(xtree_Element *elem, char *data);
+
+CXX_ENDGUARD
 
 #endif

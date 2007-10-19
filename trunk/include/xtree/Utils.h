@@ -3,6 +3,8 @@
 
 #include "xtree/System.h"
 
+CXX_GUARD
+
 /**
  * This function does whitespace reduction on the input string.
  * If the inPlace flag is true, we modify the buffer directly. This means
@@ -22,6 +24,7 @@
  */
 PUBFUNC(char*) xtree_compactWhitespace(char *str, int inPlace);
 
+CXX_ENDGUARD
 
 #endif
 

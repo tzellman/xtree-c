@@ -3,6 +3,8 @@
 
 #include "xtree/System.h"
 
+CXX_GUARD
+
 /**
  * The internal Node contained in a List
  */
@@ -118,6 +120,6 @@ PUBFUNC(void*) xtree_List_popBack(xtree_List *list);
  */
 PUBFUNC(void*) xtree_List_popFront(xtree_List *list);
 
-
+CXX_ENDGUARD
 
 #endif
